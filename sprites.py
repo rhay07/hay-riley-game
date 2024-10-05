@@ -8,7 +8,7 @@ import random
 class Player(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
-        Sprite.__init__(self, self.groups)
+        Sprite.__init__(self, self.groups, game.all_walls)
         self.game = game
         self.image = pg.Surface((32, 32))
         self.rect = self.image.get_rect()
@@ -18,7 +18,26 @@ class Player(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0,0
-        self.speed = 10
+        self.vy += self.speed
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+            if hits:
+                if self.vx > 0:
+                    self.x = hits[0].rect.left - self.rect.width
+                if self.vx < 0:
+                    self.x = hits[0].rect.right
+                self.vx = 0
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+            if hits:
+                if self.vy > 0:
+                    self.y = hits[0].rect.top - self.rect.height
+                if self.vy < 0:
+                    self.y = hits[0].rect.bottom
+                self.vy = 0
+                self.rect.y = self.y
     def get_keys(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
@@ -33,8 +52,9 @@ class Player(Sprite):
         self.get_keys()
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
-
+        self.collide_with_walls('x')
         self.rect.x = self.x
+        self.collide_with_walls('y')
         self.rect.y = self.y
         # self.rect.x += 1
 
@@ -77,3 +97,14 @@ class Wall(Sprite):
 
     def update(self):
         pass
+
+    class Powerup(Sprite):
+        def __init__(self, game, x, y):
+            self.game = game
+            self.groups = game.all_sprites, game.all_powerups
+            Sprite.__init__(self, self.groups)
+            self.image = pg.Surface((TILESIZE, TILESIZE))
+            self.rect = self.image.get_rect()
+            self.image.fill(PINK)
+            self.rect.x = x * TILESIZE
+            self.rect.y = y * TILESIZE
