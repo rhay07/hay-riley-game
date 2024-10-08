@@ -8,6 +8,12 @@ from sprites import *
 from tilemap import *
 from os import path
 from random import randint
+'''
+Goals
+Rules
+Feedback
+Freedom
+'''
 
 # created a game class to instantiate later
 # it will have all the necessary parts to run the game
@@ -77,7 +83,7 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
-        self.draw_text(self.screen, "This game is awesome...", 24, BLACK, WIDTH/2, HEIGHT/24)
+        self.draw_text(self.screen, "This game is awesome...", 24, WHITE, WIDTH/2, HEIGHT/24)
         pg.display.flip()
 
 
