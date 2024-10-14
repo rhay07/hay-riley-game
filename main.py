@@ -9,10 +9,16 @@ from tilemap import *
 from os import path
 from random import randint
 '''
-Goals
-Rules
-Feedback
-Freedom
+Goals: Make the game challenging but fun.
+Rules: Gravity and death
+Feedback: Jumping when space bar
+Freedom: You get to choose how your charecter moves.
+
+Alpha goal: make gravity to make the flappy bird.
+
+Beta goal: build world and levels to play on.
+
+final: debug the final game for release
 '''
 
 # created a game class to instantiate later
