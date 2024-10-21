@@ -4,7 +4,8 @@
 import pygame as pg
 
 from settings import *
-from sprites import *
+#from sprites import *
+from sprites_side_scroller import *
 from tilemap import *
 from os import path
 from random import randint
@@ -46,8 +47,8 @@ class Game:
         #allowing new things to be made in the game, and CREATES ALL SPRITES GROUP!!!! so we can update and render
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
-        self.all_mobs = pg.sprite.Group()
-        self.all_powerups = pg.sprite.Group()
+        #self.all_mobs = pg.sprite.Group()
+        #self.all_powerups = pg.sprite.Group()
         for row, tiles in enumerate(self.map.data):
             print(row)
             for col, tile in enumerate(tiles):
