@@ -6,25 +6,45 @@ from settings import *
 import random
 vec = pg.math.Vector2
 
-class Player(Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites
-        Sprite.__init__(self, self.groups, game.all_walls)
-        self.game = game
-        self.image = pg.Surface((32, 32))
-        self.rect = self.image.get_rect()
-        self.image.fill(RED)
-        #self.rect.x = x
-        #self.rect.y = y
-        # self.x = x * TILESIZE
-        # self.y = y * TILESIZE
-        self.pos = vec(x*TILESIZE, y*TILESIZE)
-        self.vel = vec(0,0)
-        self.acc = vec(0,0)
-        self.speed = 5
-        self.jumping = False
-        self.jump_power = 25
-        # self.vx, self.vy = 0, 0
+# class Player(Sprite):
+#     def __init__(self, game, x, y):
+#         self.groups = game.all_sprites
+#         Sprite.__init__(self, self.groups, game.all_walls)
+#         self.game = game
+#         self.image = pg.Surface((32, 32))
+#         self.rect = self.image.get_rect()
+#         self.image.fill(RED)
+#         #self.rect.x = x
+#         #self.rect.y = y
+#         # self.x = x * TILESIZE
+#         # self.y = y * TILESIZE
+#         self.pos = vec(x*TILESIZE, y*TILESIZE)
+#         self.vel = vec(0,0)
+#         self.acc = vec(0,0)
+#         self.speed = 5
+#         self.jumping = False
+#         self.jump_power = 25
+#         # self.vx, self.vy = 0, 0
+class Bird:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = 40
+        self.height = 30
+        self.gravity = 0.5  # Reduced gravity for slower fall
+        self.lift = -10  # Adjust lift to make the flap less intense
+        self.velocity = 0
+    def flap(self):
+        self.velocity = self.lift
+    def update(self):
+        self.velocity += self.gravity
+        self.y += self.velocity
+        # Prevent the bird from going off the top of the screen
+        if self.y < 0:
+            self.y = 0
+            self.velocity = 0
+    def draw(self, surface):
+        pg.draw.rect(surface, RED, (self.x, self.y, self.width, self.height))
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
@@ -81,7 +101,7 @@ class Player(Sprite):
         self.pos += self.vel + 0.5 * self.acc
         # self.x += self.vx * self.game.dt
         # self.y += self.vy * self.game.dt
-        self.collide_with_stuff(self.game.all_powerups, True)
+       # self.collide_with_stuff(self.game.all_powerups, True)
         self.collide_with_walls('x')
         self.rect.x = self.pos.x
         self.collide_with_walls('y')
@@ -89,52 +109,53 @@ class Player(Sprite):
         # self.rect.x += 1
 
 
-class Mob(Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites
-        Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((32, 32))
-        self.rect = self.image.get_rect()
-        self.image.fill(GREEN)
-        self.rect.x = 300
-        self.rect.y = 200
-        self.speed = 10
-        self.category = random.choice([0,1])
-    def update(self):
+
+# class Mob(Sprite):
+#     def __init__(self, game, x, y):
+#         self.groups = game.all_sprites
+#         Sprite.__init__(self, self.groups)
+#         self.game = game
+#         self.image = pg.Surface((32, 32))
+#         self.rect = self.image.get_rect()
+#         self.image.fill(GREEN)
+#         self.rect.x = 300
+#         self.rect.y = 200
+#         self.speed = 10
+#         self.category = random.choice([0,1])
+#     def update(self):
      
-        # moving towards the side of the screen
-        self.rect.x += self.speed
-        # when it hits the side of the screen, it will move down
-        if self.rect.right > WIDTH or self.rect.left < 0:
-            self.speed *= -1
-            self.rect.y += 32
-        #elif self.rect.colliderect(self.game.player):
-        #    self.speed *= -1
-        #elif self.rect.colliderect(self):
-        #    self.speed *= -1
+#         # moving towards the side of the screen
+#         self.rect.x += self.speed
+#         # when it hits the side of the screen, it will move down
+#         if self.rect.right > WIDTH or self.rect.left < 0:
+#             self.speed *= -1
+#             self.rect.y += 32
+#         #elif self.rect.colliderect(self.game.player):
+#         #    self.speed *= -1
+#         #elif self.rect.colliderect(self):
+#         #    self.speed *= -1
 
-class Wall(Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites
-        self.game = game
-        Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.rect = self.image.get_rect()
-        self.image.fill(WHITE)
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+# class Wall(Sprite):
+#     def __init__(self, game, x, y):
+#         self.groups = game.all_sprites
+#         self.game = game
+#         Sprite.__init__(self, self.groups)
+#         self.image = pg.Surface((TILESIZE, TILESIZE))
+#         self.rect = self.image.get_rect()
+#         self.image.fill(WHITE)
+#         self.rect.x = x * TILESIZE
+#         self.rect.y = y * TILESIZE
 
-    def update(self):
-        pass
+#     def update(self):
+#         pass
 
-class Powerup(Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self.groups = game.all_sprites, game.all_powerups
-        Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.rect = self.image.get_rect()
-        self.image.fill(PINK)
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+# class Powerup(Sprite):
+#     def __init__(self, game, x, y):
+#         self.game = game
+#         self.groups = game.all_sprites, game.all_powerups
+#         Sprite.__init__(self, self.groups)
+#         self.image = pg.Surface((TILESIZE, TILESIZE))
+#         self.rect = self.image.get_rect()
+#         self.image.fill(PINK)
+#         self.rect.x = x * TILESIZE
+#         self.rect.y = y * TILESIZE
