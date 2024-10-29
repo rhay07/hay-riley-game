@@ -1,6 +1,8 @@
 # this file was created by riley hay
 #import needed moduals and librarys
 
+
+
 import pygame as pg
 from settings import *  # Make sure WIDTH, HEIGHT, and FPS are defined here
 # from sprites import *
@@ -27,7 +29,7 @@ class Game:
     def __init__(self):
         pg.init()
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))  # Ensure WIDTH and HEIGHT are defined in settings
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption("Riley's Game")
         self.clock = pg.time.Clock()
         self.running = True
@@ -46,13 +48,21 @@ class Game:
         # Instantiate bird object
         self.bird = Bird(100, HEIGHT // 2)  
     # Main game loop to manage events, updates, and drawing
+    def spawn_pipes(self):
+        gap_height = random.randint(100, HEIGHT - 200)  # Random gap height between pipes
+        pipe = Pipe(WIDTH, gap_height)
+        self.all_sprites.add(pipe)
+        self.pipes.add(pipe)
     def run(self):
+        last_pipe_spawn = pg.time.get_ticks()
+        pipe_spawn_interval = 1500  # Spawn pipes every 1.5 seconds
         # Main game loop
         while self.running:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update()
             self.draw()
+            self.spawn_pipes()
     # Handle user input and other events
     def events(self):
         for event in pg.event.get():

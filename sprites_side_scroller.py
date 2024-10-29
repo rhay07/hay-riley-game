@@ -107,6 +107,21 @@ class Bird:
         self.collide_with_walls('y')
         self.rect.y = self.pos.y
         # self.rect.x += 1
+class Pipe(pg.sprite.Sprite):
+    def __init__(self, x, gap_height):
+        super().__init__()
+        self.image = pg.Surface((50, 500))  # Fixed width for the pipe
+        self.image.fill((0, 255, 0))  # Pipe color
+
+        # Create the top pipe
+        self.rect_top = self.image.get_rect()
+        self.rect_top.x = x
+        self.rect_top.y = gap_height - 500  # Position above the gap
+
+        # Create the bottom pipe
+        self.rect_bottom = self.image.get_rect()
+        self.rect_bottom.x = x
+        self.rect_bottom.y = gap_height + 100  # Position below the gap (adjust gap height)
 
 
 
