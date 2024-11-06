@@ -21,6 +21,14 @@ Beta goal: make pipes work and kill the bird
 final: debug the final game for release
 '''
 
+'''
+Sources 
+Chat gpt "How do I add a menu screen to the game"
+Chat gpt "How do I add a image for the background"
+Chat gpt "The image is not displaying"
+Chat gpt "What is the rgb code for a dark green color"
+'''
+
 class Game:
     # Initializes all game properties like display, audio, time, etc.
     def __init__(self):
@@ -93,7 +101,7 @@ class Game:
     # Main game loop to manage events, updates, and drawing
     def run(self):
         last_pipe_spawn = pg.time.get_ticks()
-        pipe_spawn_interval = 1500
+        pipe_spawn_interval = 2000
         # Main game loop
         while self.running:
             if self.showing_menu:
@@ -129,6 +137,10 @@ class Game:
         self.all_sprites.update()
         if self.bird.rect.y > HEIGHT:
             self.game_over = True  # Trigger game over if bird falls below screen
+        pipe_collisions = pg.sprite.spritecollide(self.bird, self.pipes, False, pg.sprite.collide_mask)
+        if pipe_collisions or self.bird.rect.bottom > HEIGHT or self.bird.rect.top < 0:  # Add top screen collision
+            self.game_over = True
+            self.showing_menu = True  # Return to the menu
 
     # Draw text on the screen
     def draw_text(self, surface, text, size, color, x, y):

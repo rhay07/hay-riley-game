@@ -20,7 +20,7 @@ class Bird(pg.sprite.Sprite):
         self.rect.y += self.y_velocity
 
     def flap(self):
-        self.y_velocity = -15  # Flap up by reducing y_velocity
+        self.y_velocity = -14  # Flap up by reducing y_velocity
 
 
 class Pipe(pg.sprite.Sprite):
