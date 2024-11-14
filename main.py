@@ -27,10 +27,11 @@ Chat gpt "How do I add a menu screen to the game"
 Chat gpt "How do I add a image for the background"
 Chat gpt "The image is not displaying"
 Chat gpt "What is the rgb code for a dark green color"
+Chat gpt "How do I make gaps in the pipe"
 '''
 
 class Game:
-    # Initializes all game properties like display, audio, time, etc.
+    # Initializes all game properties like display, audio, time, etc. 
     def __init__(self):
         pg.init()
         pg.mixer.init()
@@ -92,11 +93,21 @@ class Game:
                         waiting = False
 
     # Function to spawn pipes with a random gap height
+    # def spawn_pipes(self):
+    #     gap_height = random.randint(100, HEIGHT - 200)
+    #     pipe = Pipe(WIDTH, gap_height)
+    #     self.all_sprites.add(pipe)
+    #     self.pipes.add(pipe)
     def spawn_pipes(self):
-        gap_height = random.randint(100, HEIGHT - 200)
-        pipe = Pipe(WIDTH, gap_height)
-        self.all_sprites.add(pipe)
-        self.pipes.add(pipe)
+        gap_y = random.randint(100, HEIGHT - 200)  # Random gap position within a range
+
+         # Create upper and lower pipes with the gap in between
+        upper_pipe = Pipe(WIDTH, gap_y, 'upper')
+        lower_pipe = Pipe(WIDTH, gap_y, 'lower')
+  
+        # Add pipes to sprite groups
+        self.all_sprites.add(upper_pipe, lower_pipe)
+        self.pipes.add(upper_pipe, lower_pipe)
 
     # Main game loop to manage events, updates, and drawing
     def run(self):
@@ -144,7 +155,7 @@ class Game:
 
     # Draw text on the screen
     def draw_text(self, surface, text, size, color, x, y):
-        font_name = pg.font.match_font('arial')
+        font_name = pg.font.match_font('impact')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
@@ -159,6 +170,7 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.dt * 1000), 24, WHITE, WIDTH / 30, HEIGHT / 30)
         self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
+        self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, BLACK, WIDTH / 2, HEIGHT / 1.1)
         pg.display.flip()
 
 if __name__ == "__main__":
