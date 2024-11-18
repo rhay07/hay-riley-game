@@ -41,7 +41,7 @@ class Game:
         self.running = True
         self.game_over = False
         self.showing_menu = True
-        self.background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'wp6956942.webp'))
+        self.background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'vgt0szh38rx11.webp'))
         self.background = pg.transform.scale(self.background, (WIDTH, HEIGHT))  # Scale to fit screen
         #self.menu_background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'menubackground.jpg'))
         #self.menu_background = pg.transform.scale(self.menu_background, (WIDTH, HEIGHT))  # Scale to fit screen
@@ -155,7 +155,7 @@ class Game:
 
     # Draw text on the screen
     def draw_text(self, surface, text, size, color, x, y):
-        font_name = pg.font.match_font('impact')
+        font_name = pg.font.match_font('impact ')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
@@ -169,8 +169,8 @@ class Game:
         #self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.dt * 1000), 24, WHITE, WIDTH / 30, HEIGHT / 30)
-        self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
-        self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, BLACK, WIDTH / 2, HEIGHT / 1.1)
+#        self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
+        self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, WHITE, WIDTH / 2, HEIGHT / 1.1)
         pg.display.flip()
 
 if __name__ == "__main__":

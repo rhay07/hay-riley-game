@@ -76,29 +76,39 @@ class Bird(pg.sprite.Sprite):
 
 class Pipe(pg.sprite.Sprite):
     def __init__(self, x, gap_y, position):
-        super().__init__()  # Initialize the Sprite superclass
-        #self.image = pg.image.load('stone.png')
-        self.image = pg.Surface((50, HEIGHT))  # Width of the pipe and screen height
-        # Create the gap by cutting the pipe's image
-        self.image = pg.Surface((50, HEIGHT))  # Width of the pipe and screen height
-        self.image.fill(DARKGREEN)  # Green color for the pipe
-        self.rect = self.image.get_rect()
+        super().__init__()
 
+        # Load the pipe image
+        self.pipe_image = pg.image.load('greenvine6.png').convert_alpha()
+
+        # Get the dimensions of the pipe image
+        pipe_width, pipe_height = self.pipe_image.get_size()
+
+        # Create a surface for the pipe
+        pipe_surface_height = HEIGHT  # Pipe will stretch to screen height
+        self.image = pg.Surface((pipe_width, pipe_surface_height), pg.SRCALPHA)  # Transparent background
+
+        # Tile the pipe image to fill the surface
+        for y in range(0, pipe_surface_height, pipe_height):
+            self.image.blit(self.pipe_image, (0, y))
+
+        # Flip the image for 'upper' pipes
         if position == 'upper':
-            # Place the top pipe at the specified gap_y position
-            self.rect.bottom = gap_y  # Align bottom of top pipe to the top of the gap
+            self.image = pg.transform.flip(self.image, False, True)
+
+        # Set the rectangle for positioning
+        self.rect = self.image.get_rect()
+        if position == 'upper':
+            self.rect.bottom = gap_y  # Align bottom of top pipe to the gap
         elif position == 'lower':
-            # Place the bottom pipe just below the gap
-            self.rect.top = gap_y + PIPEGAP  # Align top of bottom pipe to the bottom of the gap
+            self.rect.top = gap_y + PIPEGAP  # Align top of bottom pipe to the gap
 
         self.rect.x = x
 
-
     def update(self):
-        # Move the pipes left to simulate scrolling
-        self.rect.x -= 5
+        # Move the pipes to the left
+        self.rect.x -= 6
 
-
-        # Check if pipes have moved off screen to delete
+        # Remove pipes that are off-screen
         if self.rect.right < 0:
             self.kill()
