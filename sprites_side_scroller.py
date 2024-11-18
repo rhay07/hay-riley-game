@@ -105,6 +105,8 @@ class Pipe(pg.sprite.Sprite):
 
         self.rect.x = x
 
+        self.passed = False
+
     def update(self):
         # Move the pipes to the left
         self.rect.x -= 6

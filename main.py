@@ -28,6 +28,7 @@ Chat gpt "How do I add a image for the background"
 Chat gpt "The image is not displaying"
 Chat gpt "What is the rgb code for a dark green color"
 Chat gpt "How do I make gaps in the pipe"
+Chat gpt "How do I add an animated sprite"
 '''
 
 class Game:
@@ -38,13 +39,22 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption("Riley's Game")
         self.clock = pg.time.Clock()
+        self.score = 0
         self.running = True
         self.game_over = False
         self.showing_menu = True
         self.background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'vgt0szh38rx11.webp'))
         self.background = pg.transform.scale(self.background, (WIDTH, HEIGHT))  # Scale to fit screen
-        #self.menu_background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'menubackground.jpg'))
-        #self.menu_background = pg.transform.scale(self.menu_background, (WIDTH, HEIGHT))  # Scale to fit screen
+        self.menu_background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'menubackground.png'))
+        self.menu_background = pg.transform.scale(self.menu_background, (WIDTH, HEIGHT))  # Scale to fit screen
+        self.logo1 = pg.image.load("fowl-1.png")  # Load the small image
+        self.logo2 = pg.image.load("fowl-2.png")
+        self.logo1 = pg.transform.scale(self.logo1, (250, 250))  # Scale the logo if needed
+        self.logo2 = pg.transform.scale(self.logo2, (250, 250))
+        self.current_logo = self.logo1  # Start with logo1
+        self.last_update = pg.time.get_ticks()  # Get the time at the start
+        self.switch_time = 500 
+
 
     # Load external resources or data, like map files
     def load_data(self):
@@ -72,9 +82,12 @@ class Game:
     def show_menu(self):
         # Display a menu with "Start" and "Quit" options
         self.screen.fill(BLACK)
+        self.screen.blit(self.menu_background, (0, 0))
+        self.screen.blit(self.current_logo, (WIDTH / 3.5 - self.current_logo.get_width() / 1, HEIGHT / 3))
         self.draw_text(self.screen, "Flapping Fowl", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text(self.screen, "Press ENTER to start", 24, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text(self.screen, "Press Q to quit", 24, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.switch_logo()
         pg.display.flip()
 
         # Wait for user input
@@ -91,13 +104,14 @@ class Game:
                     if event.key == pg.K_q:  # Q key to quit the game
                         self.running = False
                         waiting = False
+    def switch_logo(self):
+        # Switch the logo based on time
+        now = pg.time.get_ticks()  # Get the current time in milliseconds
+        if now - self.last_update > self.switch_time:  # If enough time has passed
+            # Toggle between the two logos
+            self.current_logo = self.logo2 if self.current_logo == self.logo1 else self.logo1
+            self.last_update = now  # Reset the timer
 
-    # Function to spawn pipes with a random gap height
-    # def spawn_pipes(self):
-    #     gap_height = random.randint(100, HEIGHT - 200)
-    #     pipe = Pipe(WIDTH, gap_height)
-    #     self.all_sprites.add(pipe)
-    #     self.pipes.add(pipe)
     def spawn_pipes(self):
         gap_y = random.randint(100, HEIGHT - 200)  # Random gap position within a range
 
@@ -152,6 +166,10 @@ class Game:
         if pipe_collisions or self.bird.rect.bottom > HEIGHT or self.bird.rect.top < 0:  # Add top screen collision
             self.game_over = True
             self.showing_menu = True  # Return to the menu
+        for pipe in self.pipes:
+            if pipe.rect.x < self.bird.rect.x and not pipe.passed:
+                pipe.passed = True
+                self.score += 0.5  # Increase score
 
     # Draw text on the screen
     def draw_text(self, surface, text, size, color, x, y):
@@ -168,9 +186,10 @@ class Game:
         #self.screen.blit(self.menu_background, (0, 0))
         #self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, str(self.dt * 1000), 24, WHITE, WIDTH / 30, HEIGHT / 30)
+#        self.draw_text(self.screen, str(self.dt * 1000), 24, WHITE, WIDTH / 30, HEIGHT / 30)
 #        self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
         self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, WHITE, WIDTH / 2, HEIGHT / 1.1)
+        self.draw_text(self.screen, f"Score: {self.score}", 24, WHITE, WIDTH / 2, 20)
         pg.display.flip()
 
 if __name__ == "__main__":
