@@ -29,6 +29,8 @@ Chat gpt "The image is not displaying"
 Chat gpt "What is the rgb code for a dark green color"
 Chat gpt "How do I make gaps in the pipe"
 Chat gpt "How do I add an animated sprite"
+Chat gpt "How do I make the sprite half way off screen"
+Chat gpt "How do I make a score board"
 '''
 
 class Game:
@@ -64,6 +66,7 @@ class Game:
     # Reset game state, initialize sprites, and groups
     def reset(self):
         self.game_over = False
+        self.score = 0
         self.new()  # Reset the game by calling new
 
     # Set up the game state, initialize sprites, and groups
@@ -74,9 +77,11 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.pipes = pg.sprite.Group()
+        self.vulture = pg.sprite.Group()
         # Instantiate bird object
-        self.bird = Bird(100, HEIGHT // 2)
-        self.all_sprites.add(self.bird)
+        self.bird = Bird(300, HEIGHT // 2)
+        self.vulture = Vulture(-150, HEIGHT // 2.9)
+        self.all_sprites.add(self.bird, self.vulture)
 
     # Show a menu screen before the game starts
     def show_menu(self):

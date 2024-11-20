@@ -6,21 +6,6 @@ from settings import *
 import random
 
 
-# class Bird(pg.sprite.Sprite):
-#     def __init__(self, x, y):
-#         super().__init__()  
-#         self.image = pg.Surface((30, 30))
-#         self.image.fill((ORANGE)) 
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (x, y)
-#         self.y_velocity = 0
-
-#     def update(self):
-#         self.y_velocity += 1  # Gravity effect
-#         self.rect.y += self.y_velocity
-
-#     def flap(self):
-#         self.y_velocity = -14  # Flap up by reducing y_velocity
 class Bird(pg.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -114,3 +99,38 @@ class Pipe(pg.sprite.Sprite):
         # Remove pipes that are off-screen
         if self.rect.right < 0:
             self.kill()
+
+class Vulture(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+
+        # Load vulture animation frames
+        self.frames = [
+            pg.image.load("vulture1.png").convert_alpha(),
+            pg.image.load("vulture2.png").convert_alpha(),
+        ]
+        # Scale frames if needed
+        self.frames = [pg.transform.scale(frame, (300, 300)) for frame in self.frames]
+
+        # Set initial frame
+        self.current_frame = 0
+        self.image = self.frames[self.current_frame]
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)  # Position at the left of the screen
+
+        # Animation timing
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 200  # Change frame every 300ms
+
+        
+
+    def update(self):
+        # Handle animation timing
+        now = pg.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            # Switch to the next frame
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+            self.image = self.frames[self.current_frame]
+
+
