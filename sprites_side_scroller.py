@@ -6,19 +6,28 @@ from settings import *
 import random
 
 
+
 class Bird(pg.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, skin="default"):
         super().__init__()
 
-        # Load the two frames
+        # Define available skins
+        self.skins = {
+            "Default": ["fowl-1.png", "fowl-2.png"],
+            "Red": ["red1.png", "red2.png"],
+            "Quetzal": ["quetz1.png", "quetz2.png"],
+            "Kiwi": ["kiwi1.png", "kiwi2.png"],  
+        }
+
+        # Load the selected skin frames
         self.frames = [
-            pg.image.load("fowl-1.png").convert_alpha(),
-            pg.image.load("fowl-2.png").convert_alpha()
+            pg.image.load(self.skins[skin][0]).convert_alpha(),
+            pg.image.load(self.skins[skin][1]).convert_alpha()
         ]
-        
+
         # Scale the frames if necessary
         self.frames = [pg.transform.scale(frame, (100, 100)) for frame in self.frames]
-        
+
         # Set the initial frame
         self.current_frame = 0
         self.image = self.frames[self.current_frame]
@@ -26,7 +35,7 @@ class Bird(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
         # Animation timer
-        self.last_update = pg.time.get_ticks()  # Track time since the last frame change
+        self.last_update = pg.time.get_ticks()
         self.frame_rate = 200  # Milliseconds per frame
 
         # Movement variables
@@ -34,7 +43,7 @@ class Bird(pg.sprite.Sprite):
 
     def flap(self):
         self.velocity = -10  # Set the velocity for flapping
-    
+
     def animate(self):
         # Update frame if enough time has passed
         now = pg.time.get_ticks()
@@ -52,10 +61,11 @@ class Bird(pg.sprite.Sprite):
         self.velocity += 0.5  # Simulate gravity
         self.rect.y += int(self.velocity)
 
-        # Check boundaries (e.g., game over if out of bounds)
+        # Prevent the bird from going off-screen
         if self.rect.bottom >= HEIGHT:
             self.rect.bottom = HEIGHT
-            self.velocity = 0  # Stop the bird at the bottom
+            self.velocity = 0
+
 
 
 

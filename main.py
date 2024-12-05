@@ -42,25 +42,34 @@ class Game:
         pg.display.set_caption("Riley's Game")
         self.clock = pg.time.Clock()
         self.score = 0
+        self.highscore = 0
         self.running = True
         self.game_over = False
         self.showing_menu = True
+        self.selected_skin = "Default"
         self.background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'vgt0szh38rx11.webp'))
         self.background = pg.transform.scale(self.background, (WIDTH, HEIGHT))  # Scale to fit screen
         self.menu_background = pg.image.load(path.join(r'C:\Users\Riley.Hay26\OneDrive - Bellarmine College Preparatory\_Junior Year\Comp si', 'menubackground.png'))
         self.menu_background = pg.transform.scale(self.menu_background, (WIDTH, HEIGHT))  # Scale to fit screen
-        self.logo1 = pg.image.load("fowl-1.png")  # Load the small image
-        self.logo2 = pg.image.load("fowl-2.png")
-        self.logo1 = pg.transform.scale(self.logo1, (250, 250))  # Scale the logo if needed
-        self.logo2 = pg.transform.scale(self.logo2, (250, 250))
-        self.current_logo = self.logo1  # Start with logo1
-        self.last_update = pg.time.get_ticks()  # Get the time at the start
-        self.switch_time = 500 
+        #self.logo1 = pg.image.load("fowl-1.png")  # Load the small image
+        #self.logo2 = pg.image.load("fowl-2.png")
+        #self.logo1 = pg.transform.scale(self.logo1, (250, 250))  # Scale the logo if needed
+        #self.logo2 = pg.transform.scale(self.logo2, (250, 250))
+        #self.current_logo = self.logo1  # Start with logo1
+        #self.last_update = pg.time.get_ticks()  # Get the time at the start
+        #self.switch_time = 500 
 
 
     # Load external resources or data, like map files
     def load_data(self):
         self.game_folder = path.dirname(__file__)
+        #with open(path.join(self.game_folder, HS_FILE), "w") as f:
+        #    f.write(str(self.highscore))
+        with open(path.join(self.game_folder, HS_FILE), 'r') as f:
+                try:
+                    self.highscore = int(f.read())
+                except:
+                    self.highscore=0
         self.map = Map(path.join(self.game_folder, 'level1.txt'))
 
     # Reset game state, initialize sprites, and groups
@@ -79,36 +88,50 @@ class Game:
         self.pipes = pg.sprite.Group()
         self.vulture = pg.sprite.Group()
         # Instantiate bird object
-        self.bird = Bird(300, HEIGHT // 2)
+        #self.bird = Bird(300, HEIGHT // 2)
+        self.bird = Bird(300, HEIGHT // 2, skin=self.selected_skin)
         self.vulture = Vulture(-150, HEIGHT // 2.9)
         self.all_sprites.add(self.bird, self.vulture)
 
-    # Show a menu screen before the game starts
     def show_menu(self):
-        # Display a menu with "Start" and "Quit" options
-        self.screen.fill(BLACK)
-        self.screen.blit(self.menu_background, (0, 0))
-        self.screen.blit(self.current_logo, (WIDTH / 3.5 - self.current_logo.get_width() / 1, HEIGHT / 3))
-        self.draw_text(self.screen, "Flapping Fowl", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text(self.screen, "Press ENTER to start", 24, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text(self.screen, "Press Q to quit", 24, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-        self.switch_logo()
-        pg.display.flip()
+    # Define skin options and initialize the current index
+        skin_options = ["Default", "Red", "Quetzal", "Kiwi"]
+        current_skin_index = 0
 
-        # Wait for user input
         waiting = True
         while waiting:
+        # Draw the menu background
+            self.screen.blit(self.menu_background, (0, 0))
+
+        # Display the menu title
+            self.draw_text(self.screen, "Flapping Fowl", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+
+        # Show the currently selected skin
+            self.draw_text(self.screen, f"Selected Skin: {skin_options[current_skin_index]}", 24, WHITE, WIDTH / 2, HEIGHT / 2)
+
+        # Show instructions for changing skins and starting the game
+            self.draw_text(self.screen, "Press LEFT/RIGHT to change skin", 24, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+            self.draw_text(self.screen, "Press ENTER to start", 24, WHITE, WIDTH / 2, HEIGHT * 7 / 8)
+
+        # Refresh the display
+            pg.display.flip()
+
+        # Handle events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.running = False
                     waiting = False
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_RETURN:  # Enter key to start the game
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RETURN:  # Start the game
+                        self.selected_skin = skin_options[current_skin_index]
                         self.showing_menu = False
                         waiting = False
-                    if event.key == pg.K_q:  # Q key to quit the game
-                        self.running = False
-                        waiting = False
+                    elif event.key == pg.K_RIGHT:  # Switch to the next skin
+                        current_skin_index = (current_skin_index + 1) % len(skin_options)
+                    elif event.key == pg.K_LEFT:  # Switch to the previous skin
+                        current_skin_index = (current_skin_index - 1) % len(skin_options)
+
+
     def switch_logo(self):
         # Switch the logo based on time
         now = pg.time.get_ticks()  # Get the current time in milliseconds
@@ -156,6 +179,11 @@ class Game:
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
+                # if self.score > self.highscore:
+                #     self.highscore = self.score
+                #     with open(path.join(self.game_folder, HS_FILE), "w") as f:
+                #         f.write(str(self.highscore))
+
                 self.running = False
             if event.type == pg.KEYDOWN and not self.game_over:
                 if event.key == pg.K_SPACE:
@@ -171,10 +199,15 @@ class Game:
         if pipe_collisions or self.bird.rect.bottom > HEIGHT or self.bird.rect.top < 0:  # Add top screen collision
             self.game_over = True
             self.showing_menu = True  # Return to the menu
+            if self.score > self.highscore:
+                self.highscore = self.score
+            with open(path.join(self.game_folder, HS_FILE), "w") as f:
+                f.write(str(self.highscore))
         for pipe in self.pipes:
             if pipe.rect.x < self.bird.rect.x and not pipe.passed:
                 pipe.passed = True
                 self.score += 0.5  # Increase score
+                #self.highscore += 0.5  # Increase score
 
     # Draw text on the screen
     def draw_text(self, surface, text, size, color, x, y):
@@ -195,6 +228,7 @@ class Game:
 #        self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
         self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, WHITE, WIDTH / 2, HEIGHT / 1.1)
         self.draw_text(self.screen, f"Score: {self.score}", 24, WHITE, WIDTH / 2, 20)
+        self.draw_text(self.screen, f"High Score: {self.highscore}", 24, WHITE, WIDTH / 2, 45)
         pg.display.flip()
 
 if __name__ == "__main__":

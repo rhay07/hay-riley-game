@@ -12,4 +12,5 @@ PINK = (255, 155, 155)
 YELLOW = (255, 255, 0)
 ORANGE = (255,127,80)
 PIPEGAP = 185
+HS_FILE = "highscore.txt"
 
