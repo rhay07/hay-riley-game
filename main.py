@@ -199,10 +199,10 @@ class Game:
         if pipe_collisions or self.bird.rect.bottom > HEIGHT or self.bird.rect.top < 0:  # Add top screen collision
             self.game_over = True
             self.showing_menu = True  # Return to the menu
-            if self.score > self.highscore:
-                self.highscore = self.score
-            with open(path.join(self.game_folder, HS_FILE), "w") as f:
-                f.write(str(self.highscore))
+            # if self.score > self.highscore:
+            #     self.highscore = self.score
+            # with open(path.join(self.game_folder, HS_FILE), "w") as f:
+            #     f.write(str(self.highscore))
         for pipe in self.pipes:
             if pipe.rect.x < self.bird.rect.x and not pipe.passed:
                 pipe.passed = True
@@ -228,7 +228,7 @@ class Game:
 #        self.draw_text(self.screen, "DONT HIT THE FLOOR", 24, BLACK, WIDTH / 2, HEIGHT / 24)
         self.draw_text(self.screen, "BUT DONT FLY TOO HIGH", 24, WHITE, WIDTH / 2, HEIGHT / 1.1)
         self.draw_text(self.screen, f"Score: {self.score}", 24, WHITE, WIDTH / 2, 20)
-        self.draw_text(self.screen, f"High Score: {self.highscore}", 24, WHITE, WIDTH / 2, 45)
+        # self.draw_text(self.screen, f"High Score: {self.highscore}", 24, WHITE, WIDTH / 2, 45)
         pg.display.flip()
 
 if __name__ == "__main__":
